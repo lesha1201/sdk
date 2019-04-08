@@ -111,6 +111,13 @@ export const TABLE_FRAGMENT = gql`
     id
     name
     displayName
+    application {
+      id
+      name
+      displayName
+      description
+      appType
+    }
     isSystem
     fields {
       ...TableFieldFragment

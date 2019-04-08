@@ -1,5 +1,6 @@
 // @flow
 
+import * as tablesListSelectors from './tablesListSelectors';
 import * as tableSelectors from './tableSelectors';
 import * as tableFieldSelectors from './tableFieldSelectors';
 
@@ -9,6 +10,7 @@ export { getTableSchemaById } from './getTableSchemaById';
 
 export {
   tableSelectors,
+  tablesListSelectors,
   tableFieldSelectors,
 };
 

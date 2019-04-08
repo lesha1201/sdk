@@ -45,7 +45,8 @@ export class RecordCreate extends Component<RecordCreateProps> {
                 {
                   tableMetaResult,
                   mutateResult: mutateResult || {},
-                }) }
+                },
+              ) }
           </RecordCrud>
         ) }
       </TableConsumer>

@@ -4,6 +4,7 @@ import * as R from 'ramda';
 import * as tableFieldSelectors from '../selectors/tableFieldSelectors';
 import { SYSTEM_TABLES } from '../constants';
 import type { TableSchema, QueryGeneratorConfig } from '../types';
+import { tablesListSelectors } from '../selectors';
 
 export type CheckedRule = {
   id: string,
@@ -32,11 +33,11 @@ const emptyRelationList = {
 
 export const createQueryObject = (
   tablesList: TableSchema[],
-  tableName: string,
+  tableId: string,
   queryObjectConfig: QueryGeneratorConfig = {},
   prevKey?: string = '',
 ) => {
-  const { fields = [] } = getTableByName(tablesList, tableName) || {};
+  const { fields = [] } = tablesListSelectors.getTableById(tablesList, tableId);
   const {
     deep = DEFAULT_DEPTH,
     withMeta = true,
@@ -56,6 +57,7 @@ export const createQueryObject = (
     .forEach(field => {
       let fieldContent = field.name;
       const isRelation = tableFieldSelectors.isRelationField(field);
+      const isMissingRelation = tableFieldSelectors.isMissingRelationField(field);
       const isFile = tableFieldSelectors.isFileField(field);
       const isSmart = tableFieldSelectors.isSmartField(field);
       const isList = tableFieldSelectors.isListField(field);
@@ -67,6 +69,24 @@ export const createQueryObject = (
       if (isSettingsRefTable) {
         fieldContent = {
           _description: '_description',
+        };
+      } else if (isFile) {
+        fieldContent = {
+          id: 'id',
+          fileId: 'fileId',
+          filename: 'filename',
+          downloadUrl: 'downloadUrl',
+          shareUrl: 'shareUrl',
+          meta: 'meta',
+        };
+      } else if (isSmart) {
+        fieldContent = field.fieldTypeAttributes.innerFields.reduce(
+          (accum, { name }) => { accum[name] = name; return accum; },
+          {},
+        );
+      } else if (isMissingRelation) {
+        fieldContent = {
+          table: 'table',
         };
       } else if (isRelation) {
         if (deep > 1) {
@@ -99,20 +119,6 @@ export const createQueryObject = (
             _description: '_description',
           };
         }
-      } else if (isFile) {
-        fieldContent = {
-          id: 'id',
-          fileId: 'fileId',
-          filename: 'filename',
-          downloadUrl: 'downloadUrl',
-          shareUrl: 'shareUrl',
-          meta: 'meta',
-        };
-      } else if (isSmart) {
-        fieldContent = field.fieldTypeAttributes.innerFields.reduce(
-          (accum, { name }) => { accum[name] = name; return accum; },
-          {},
-        );
       }
 
       if (isList && (isRelation || isFile) && fieldContent !== null) {

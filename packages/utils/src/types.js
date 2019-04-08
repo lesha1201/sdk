@@ -45,10 +45,21 @@ export type FieldSchema = {
   },
 };
 
+export type Application = {
+  id: string,
+  name: string,
+  displayName: string,
+  description: string,
+  tableCount: number,
+  resolverCount: number,
+  appType: string,
+}
+
 export type TableSchema = {
   id: string,
   name: string,
   displayName?: string,
+  application?: ?Application,
   isSystem?: boolean,
   fields: Array<FieldSchema>,
 };
@@ -93,4 +104,11 @@ export type QueryGeneratorConfig = {
   deep?: number,
   withMeta?: boolean,
   includeColumns?: null | string[],
+};
+
+
+export type QueryGeneratorData = {
+  tablesList: TableSchema[],
+  tableName: string,
+  appName: string,
 };

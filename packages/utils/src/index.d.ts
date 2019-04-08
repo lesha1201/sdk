@@ -53,3 +53,10 @@ export function createQueryColumnsList(
   tableName: string,
   config?: CreateQueryColumnsListConfig,
 ): Array<{ name: string, title: string, meta: Object }>;
+
+
+export type QueryGeneratorData = {
+  tablesList: TableSchema[],
+  tableName: string,
+  appName?: string,
+};

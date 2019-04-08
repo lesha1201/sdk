@@ -25,10 +25,10 @@ type RecordCrudProps = {
 
 const createRecordTag = (tableMeta: *, mode: CrudModes) => {
   switch (mode) {
-    case 'create': return createTableRowCreateTag([tableMeta], tableMeta.name);
-    case 'createMany': return createTableRowCreateManyTag([tableMeta], tableMeta.name);
-    case 'update': return createTableRowUpdateTag([tableMeta], tableMeta.name);
-    case 'delete': return createTableRowDeleteTag([tableMeta], tableMeta.name);
+    case 'create': return createTableRowCreateTag([tableMeta], tableMeta.id);
+    case 'createMany': return createTableRowCreateManyTag([tableMeta], tableMeta.id);
+    case 'update': return createTableRowUpdateTag([tableMeta], tableMeta.id);
+    case 'delete': return createTableRowDeleteTag([tableMeta], tableMeta.id);
     default: return null;
   }
 };

@@ -11,6 +11,7 @@ import {
 
 type RecordsListProps = {
   tableName?: string,
+  appName?: string,
   tableId?: string,
   children: (recordsListResult: Object) => React$Node,
   deep?: number,
@@ -49,7 +50,10 @@ export class RecordsList extends Component<RecordsListProps> {
   getRecordsListData = (recordsListResult: Object) => {
     const recordsListData = this.isFetchingNewTable && recordsListResult.loading
       ? []
-      : R.path(['data', 'tableContent'], recordsListResult);
+      : (
+        R.path(['data', 'tableContent'], recordsListResult) ||
+        R.path(['data', 'appContent', 'tableContent'], recordsListResult)
+      );
 
     if (this.isFetchingNewTable && !recordsListResult.loading) {
       this.stopFetchingNewTable();
@@ -68,9 +72,11 @@ export class RecordsList extends Component<RecordsListProps> {
     const query = gql(
       createTableFilterGraphqlTag(
         [tableMetaResult],
-        tableMetaResult.name,
-        { tableContentName: 'tableContent', deep },
-      ),
+        tableMetaResult.id, {
+          tableContentName: 'tableContent',
+          appContentName: 'appContent',
+          deep,
+        }),
     );
 
     return (
@@ -89,12 +95,14 @@ export class RecordsList extends Component<RecordsListProps> {
   render() {
     const {
       tableName,
+      appName,
       tableId,
     } = this.props;
 
     return (
       <TableConsumer
         name={ tableName }
+        app={ appName }
         id={ tableId }
       >
         { this.renderQuery }

@@ -6,6 +6,8 @@ export const FIELD_TYPE = {
   ID: 'ID',
   NUMBER: 'NUMBER',
   RELATION: 'RELATION',
+  MISSING_RELATION: 'MISSING_RELATION',
+  ONE_WAY_RELATION: 'ONE_WAY_RELATION',
   SWITCH: 'SWITCH',
   TEXT: 'TEXT',
   SMART: 'SMART',
@@ -93,3 +95,7 @@ export const SYSTEM_TABLES = {
   ENVIRONMENT_VARIABLES: 'EnvironmentVariables',
 };
 
+export const APP_NAMES = {
+  SYSTEM: 'system',
+  DEFAULT: 'default',
+};
