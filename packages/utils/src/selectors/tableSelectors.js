@@ -5,6 +5,17 @@ import type { TableSchema, FieldSchema } from '../types';
 
 export const getTable = (table?: TableSchema) => table;
 
+
+export const isSystem = createSelector(
+  getTable,
+  R.propEq('isSystem', true),
+);
+
+export const isIntegrationTable = createSelector(
+  getTable,
+  ({ application }) => !!application,
+);
+
 export const getFieldById: Selector<TableSchema, string, $Shape<FieldSchema>> =
   ({ fields } : TableSchema, fieldId: string) =>
     R.find(

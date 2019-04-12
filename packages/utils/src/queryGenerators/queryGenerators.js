@@ -32,9 +32,8 @@ const createQueryString =
     return transformQueryObjectToString(gueryObject, { prevSpaceCount, initSpaceCount: spaceCount, spaceCount });
   };
 
-const wrapInAppName = (appName: 'system' | 'default' | string, appContentName?: string) => (queryString: string) => {
-
-  if (appName === 'system' || appName === 'default') {
+const wrapInAppName = (appName: string, appContentName?: string) => (queryString: string) => {
+  if (!appName) {
     return queryString;
   }
 
@@ -48,19 +47,20 @@ const wrapInAppName = (appName: 'system' | 'default' | string, appContentName?: 
 
 export const createTableFilterGraphqlTag = (tablesList: TableSchema[], tableId: string, config: QueryTableFilterConfig = {}) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
 
   return `
   query ${upperFirst(table.name)}TableContent(
-    $filter: ${SchemaNameGenerator.getFilterInputTypeName(table.name, table.appName)}
-    $orderBy: [${SchemaNameGenerator.getOrderByInputTypeName(table.name, table.appName)}]
+    $filter: ${SchemaNameGenerator.getFilterInputTypeName(table.name, appName)}
+    $orderBy: [${SchemaNameGenerator.getOrderByInputTypeName(table.name, appName)}]
     $after: String
     $before: String
     $first: Int
     $last: Int
     $skip: Int
   ) {
-    ${wrapInAppName(table.appName, config.appContentName)(`
-      ${config.tableContentName ? `${config.tableContentName}: ` : ''}${SchemaNameGenerator.getTableListFieldName(table.name, table.appName)}(
+    ${wrapInAppName(appName, config.appContentName)(`
+      ${config.tableContentName ? `${config.tableContentName}: ` : ''}${SchemaNameGenerator.getTableListFieldName(table.name, appName)}(
         filter: $filter
         orderBy: $orderBy
         after: $after
@@ -81,14 +81,16 @@ export const createTableFilterGraphqlTag = (tablesList: TableSchema[], tableId: 
 
 export const createTableRowCreateTag = (tablesList: TableSchema[], tableId: string, config: QueryGeneratorConfig = {}) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
+
   const hasNonMetaFields = tableSelectors.hasNonMetaFields(table);
 
   if (hasNonMetaFields) {
     return `
 
-    mutation ${upperFirst(table.name)}Create($data: ${SchemaNameGenerator.getCreateInputName(table.name, table.appName)}!) {
-      ${wrapInAppName(table.appName)(`
-        ${SchemaNameGenerator.getCreateItemFieldName(table.name, table.appName)}(data: $data) {
+    mutation ${upperFirst(table.name)}Create($data: ${SchemaNameGenerator.getCreateInputName(table.name, appName)}!) {
+      ${wrapInAppName(appName)(`
+        ${SchemaNameGenerator.getCreateItemFieldName(table.name, appName)}(data: $data) {
           id${createQueryString(tablesList, tableId, { withMeta: false, ...config })}
         }
       `)}
@@ -97,8 +99,8 @@ export const createTableRowCreateTag = (tablesList: TableSchema[], tableId: stri
 
   return `
   mutation ${upperFirst(table.name)}Create {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getCreateItemFieldName(table.name.table.appName)} {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getCreateItemFieldName(appName)} {
         id${createQueryString(tablesList, tableId, { withMeta: false, ...config })}
       }
     `)}
@@ -107,13 +109,15 @@ export const createTableRowCreateTag = (tablesList: TableSchema[], tableId: stri
 
 export const createTableRowCreateManyTag = (tablesList: TableSchema[], tableId: string) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
+
   const hasNonMetaFields = tableSelectors.hasNonMetaFields(table);
 
   if (hasNonMetaFields) {
     return `
-  mutation ${upperFirst(table.name)}CreateMany($data: [${SchemaNameGenerator.getCreateManyInputName(table.name, table.appName)}]!) {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getCreateManyItemFieldName(table.name, table.appName)}(data: $data) {
+  mutation ${upperFirst(table.name)}CreateMany($data: [${SchemaNameGenerator.getCreateManyInputName(table.name, appName)}]!) {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getCreateManyItemFieldName(table.name, appName)}(data: $data) {
         count
       }
     `)}
@@ -122,8 +126,8 @@ export const createTableRowCreateManyTag = (tablesList: TableSchema[], tableId: 
 
   return `
   mutation ${upperFirst(table.name)}CreateMany {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getCreateManyItemFieldName(table.name, table.appName)} {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getCreateManyItemFieldName(table.name, appName)} {
         count
       }
     `)}
@@ -132,14 +136,15 @@ export const createTableRowCreateManyTag = (tablesList: TableSchema[], tableId: 
 
 export const createTableRowUpdateTag = (tablesList: TableSchema[], tableId: string, config: QueryGeneratorConfig = {}) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
 
   return `
   mutation ${upperFirst(table.name)}Update(
-    $data: ${SchemaNameGenerator.getUpdateInputName(table.name, table.appName)}!, 
-    $filter: ${SchemaNameGenerator.getKeyFilterInputTypeName(table.name, table.appName)}
+    $data: ${SchemaNameGenerator.getUpdateInputName(table.name, appName)}!, 
+    $filter: ${SchemaNameGenerator.getKeyFilterInputTypeName(table.name, appName)}
   ) {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getUpdateItemFieldName(table.name, table.appName)}(data: $data, filter: $filter) {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getUpdateItemFieldName(table.name, appName)}(data: $data, filter: $filter) {
         id${createQueryString(tablesList, tableId, { withMeta: false, ...config })}
       }
     `)}
@@ -148,11 +153,12 @@ export const createTableRowUpdateTag = (tablesList: TableSchema[], tableId: stri
 
 export const createTableRowQueryTag = (tablesList: TableSchema[], tableId: string, config: QueryGeneratorConfig = {}) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
 
   return `
   query ${upperFirst(table.name)}Entity($id: ID!) {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getTableItemFieldName(table.name, table.appName)}(id: $id) {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getTableItemFieldName(table.name, appName)}(id: $id) {
         ${createQueryString(tablesList, tableId, { ...config })}
       }
     `)}
@@ -161,11 +167,12 @@ export const createTableRowQueryTag = (tablesList: TableSchema[], tableId: strin
 
 export const createTableRowDeleteTag = (tablesList: TableSchema[], tableId: string) => {
   const table = tablesListSelectors.getTableById(tablesList, tableId);
+  const appName = tablesListSelectors.getTableApplicationName(tablesList, tableId);
 
   return `
-  mutation ${upperFirst(table.name)}Delete($filter: ${SchemaNameGenerator.getKeyFilterInputTypeName(table.name, table.appName)}!, $force: Boolean) {
-    ${wrapInAppName(table.appName)(`
-      ${SchemaNameGenerator.getDeleteItemFieldName(table.name, table.appName)}(filter: $filter, force: $force) {
+  mutation ${upperFirst(table.name)}Delete($filter: ${SchemaNameGenerator.getKeyFilterInputTypeName(table.name, appName)}!, $force: Boolean) {
+    ${wrapInAppName(appName)(`
+      ${SchemaNameGenerator.getDeleteItemFieldName(table.name, appName)}(filter: $filter, force: $force) {
         success
       }
     `)}

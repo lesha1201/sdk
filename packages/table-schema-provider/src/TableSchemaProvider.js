@@ -116,6 +116,7 @@ export const TABLE_FRAGMENT = gql`
       name
       displayName
       description
+      status
       appType
     }
     isSystem
@@ -127,6 +128,18 @@ export const TABLE_FRAGMENT = gql`
   ${TABLE_FIELD_FRAGMENT}
 `;
 
+export const APPLICATIONS_FRAGMENT = gql`
+  fragment ApplicationFragment on Application {
+    id
+    name
+    displayName
+    description
+    createdAt
+    appType
+    status
+  }
+`;
+
 export const TABLES_SCHEMA_QUERY = gql`
   query TablesSchema {
     tablesList {
@@ -135,9 +148,17 @@ export const TABLES_SCHEMA_QUERY = gql`
       }
       count
     }
+
+    applicationsList {
+      items {
+        ...ApplicationFragment
+      }
+      count
+    }
   }
 
   ${TABLE_FRAGMENT}
+  ${APPLICATIONS_FRAGMENT}
 `;
 
 type TableSchemaProviderProps = {

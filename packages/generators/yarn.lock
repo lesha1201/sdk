@@ -2,13 +2,23 @@
 # yarn lockfile v1
 
 
-"@8base/schema-name-generator@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@8base/schema-name-generator/-/schema-name-generator-0.1.3.tgz#31f408fdb89206702d439440de2d18728fd910f4"
-  integrity sha512-qnzaAHj8Mp9NmSWWj5ve0YcLP/gIUpMtvYH1IcMQyyX5jPotDYlnPVNRx8NlBo0eDnJ/OWCqKEfsV5u0UWGtOg==
+"@8base/schema-name-generator@^0.1.1", "@8base/schema-name-generator@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@8base/schema-name-generator/-/schema-name-generator-0.1.4.tgz#890544b2a758695875441c36d1cbd6dd55ee66e5"
+  integrity sha512-O3aE1RwRS78oLr+Uo6Am5hYIuCJ7WUxGmxiJN6FbQsNa2q1iADn+jQq2u7SmOfgUkzVayfIBqUa8PWh4um2XYg==
   dependencies:
     lodash "^4.17.11"
     pluralize "^7.0.0"
+
+"@8base/utils@^0.19.1":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@8base/utils/-/utils-0.19.2.tgz#4e858885a6dc0c4dbfbe3442bfecb0d5e3e32775"
+  integrity sha512-sm7wjSp67ZZshynfKc3JQhMfJi/Dk3iapNq1kdMFBiJqMeTRNA/yXCOSG/o72lH3bqymaFAdR0GPXO2uk5UjHg==
+  dependencies:
+    "@8base/schema-name-generator" "^0.1.1"
+    "@babel/runtime" "^7.3.1"
+    ramda "^0.26.1"
+    reselect "^4.0.0"
 
 "@babel/cli@^7.2.3":
   version "7.2.3"
@@ -5226,6 +5236,11 @@ require-resolve@0.0.2:
   integrity sha1-urQQqxruLz9Vt5MXRR3TQodk5vM=
   dependencies:
     x-path "^0.0.2"
+
+reselect@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
+  integrity sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"

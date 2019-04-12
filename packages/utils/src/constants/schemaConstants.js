@@ -95,7 +95,11 @@ export const SYSTEM_TABLES = {
   ENVIRONMENT_VARIABLES: 'EnvironmentVariables',
 };
 
-export const APP_NAMES = {
-  SYSTEM: 'system',
-  DEFAULT: 'default',
+export const APP_STATUS = {
+  CONNECTED: 'CONNECTED',
+  DISCONNECTED: 'DISCONNECTED',
+};
+
+export const APP_TYPES = {
+  SALESFORCE: 'Salesforce',
 };
